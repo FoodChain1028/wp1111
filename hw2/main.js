@@ -1,73 +1,6 @@
 const ATTENDER_NUM = 6;
-let attender = [];
-
-let nameList = [
-    "你",
-    "海綿寶",
-    "章魚哥",
-    "蟹阿金",
-    "皮老闆",
-    "派大星"
-];
-
-let headList = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F"
-]
-
-function createRandomNumber(n) {
-    n = parseInt(n * Math.random() + 1);
-    return n;
-}
-
-class Audience {
-    constructor() {
-        this.name = "",
-        this.head = "",
-        this.cancelBtn = true,
-        this.id = 0
-    }
-}
-
-function createYourself() {
-    let you = new Audience();
-
-    you.name = nameList[0],
-    you.head = headList[0],
-    you.cancelBtn = false,
-    you.id = 0
-    
-    console.log(you);    
-}
-
-function putAttendersIn() {
-    for (let i = 0; i < ATTENDER_NUM; i++) {
-        let newAttender = createAttender();
-        if (!isUsed(newAttender.id))
-            attender.push(newAttender);
-    }
-}
-
-function createAttender() {
-    let randomNum = createRandomNumber(ATTENDER_NUM);
-    let aud = new Audience();
-    aud.name = nameList[randomNum];
-    aud.head = headList[randomNum];
-    aud.cancelBtn = true; 
-    aud.id = randomNum-1;
-    return aud;
-} 
-
-function isUsed(newAttenderId) {
-    for (let i = 0; i < attender.length; i++) {
-        if (newAttenderId === attender[i].id) return true;
-        return false;
-    }
-}
+const YOUR_NAME = "你";
+let isPinned = true;
 
 // when user press the cancel button on the aud., the aud. will be cancelled
 let cancelBtns = document.querySelectorAll('#cancelBtn');
@@ -91,8 +24,70 @@ Array.from(cancelBtns).forEach(function(cancelBtn){
 let pinBtns = document.querySelectorAll('#pinBtn');
 Array.from(pinBtns).forEach(function(pinBtn){
     pinBtn.addEventListener('click', function(e) {
-        const audBox = e.target.parentElement.parentElement.parentElement.parentElement;    
-        console.log(audBox.id);
-    });
+        const audBox = e.target.parentElement.parentElement.parentElement.parentElement;
+        const audience = document.getElementById('audience'); 
+        if (isPinned) {
+
+            let tmpName = audBox.querySelector('#name').innerText;
+            audBox.querySelector('#name').innerText = mainChar.querySelector('#main-name').innerText
+            mainChar.querySelector('#main-name').innerText = tmpName;
+    
+            if (audBox.querySelector('#name').innerText === YOUR_NAME) 
+                audBox.querySelector('.cancel-btn').style.visibility = 'hidden';
+            else 
+                audBox.querySelector('.cancel-btn').style.visibility = 'visible';
+            let head = audBox.querySelector('.head');
+            let tmpImg = window.getComputedStyle(head).backgroundImage;
+            let mainHead = mainChar.querySelector('#main-head');
+            const mainImg = window.getComputedStyle(mainHead).backgroundImage;
+            
+            head.style.backgroundImage = mainImg;
+            head.style.backgroundPosition = '0 0.2em';
+            head.style.backgroundSize = '150%';
+            mainHead.style.backgroundImage = tmpImg;
+        }else {
+            mainChar.querySelector('#main-name').innerText = audBox.querySelector('#name').innerText;
+            mainChar.style.width = '70%';
+            mainChar.querySelector('.main').style.display = 'block';
+            audience.parentElement.style.width = '30%';
+            let head = audBox.querySelector('.head');
+            let tmpImg = window.getComputedStyle(head).backgroundImage;
+            let mainHead = mainChar.querySelector('#main-head');
+            mainHead.style.backgroundImage = tmpImg;
+            audBox.parentNode.removeChild(audBox);
+        }
+    });    
 });
 
+// Cancel to pin someone on the left side
+// make the pinned one to the right side and change css
+
+let unpin = document.querySelector('.unpin-btn');
+console.log(unpin);
+unpin.addEventListener('click', function(e) {
+    isPinned = false;  
+    let unpinBtn = e.target.parentElement;
+    let pinnedMan = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
+    console.log(pinnedMan);
+    let audBox = document.querySelector('.aud-box');
+
+    let tmp = audBox.cloneNode('deep');
+    tmp.querySelector('.name').innerText = pinnedMan.querySelector('.main-name').innerText;
+    let head = tmp.querySelector('.head')
+    head.id = 'a-0';
+    headImg = window.getComputedStyle(pinnedMan.querySelector('.main-head')).backgroundImage;
+    head.style.backgroundImage = headImg;
+    let audience = document.getElementById('audience');
+    audience.appendChild(tmp);
+    pinnedMan.style.display = 'none';
+    pinnedMan.parentElement.style.width = '0%';
+    audience.parentElement.style.width = '100%';
+    audience.style.marginTop = '50px';
+    audience.style.justifyContent = 'space-around';
+    let audBoxes = audience.querySelectorAll('.aud-box');
+    Array.from(audBoxes).forEach((audBox) => {
+        audBox.style.width = '30%';
+    })
+    if (pinnedMan.querySelector('.main-name').innerText === YOUR_NAME)
+        tmp.querySelector('.cancel-btn').style.visibility = 'hidden'; 
+});
