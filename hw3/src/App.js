@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
+import './styles.css';
+import Header from './Components/Header';
+import Main from './Components/Main';
+import Footer from './Components/Footer';
 
-function App() {
+const App = () => {
+  const [list, setList] = useState([]);
+  const [isListEmpty, setIsListEmpty] = useState(false); // 看 list 中有無東西 => 與顯示有關
+  const [currentId, setCurrentId] = useState(0);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div id='root' className='todo-app__root'>
+      <Header />
+      <Main  
+        list={list} setList={setList} 
+        currentId={currentId} setCurrentId={setCurrentId}
+        isListEmpty={isListEmpty} setIsListEmpty={setIsListEmpty}
+        />
+      <Footer 
+        isListEmpty={isListEmpty} setIsListEmpty={setIsListEmpty}
+        currentId={currentId} setCurrentId={setCurrentId}/>
     </div>
-  );
+    );
 }
 
 export default App;

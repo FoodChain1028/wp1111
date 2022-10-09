@@ -132,15 +132,6 @@ input[type='checkbox'] {
     height: 100%;
 }
 
-.todo-app__item-detail-completed {
-    text-decoration: line-through;
-    font-weight: 300;
-    overflow-wrap: break-word;
-    width: 90%;
-    transition: opacity 0.3s;
-    height: 100%;
-}
-
 .todo-app__footer {
     width: 100%;
     display: flex;
