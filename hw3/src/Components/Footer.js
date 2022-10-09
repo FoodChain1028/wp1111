@@ -1,10 +1,20 @@
-const Footer = ({isListEmpty, currentId, setCurrentId}) => {
+const Footer = (
+    {
+        isListEmpty, 
+        currentId, setCurrentId, 
+        totalNum, setTotalNum,
+        completedNum, setCompletedNum
+    }) => {
+    
+    
     return ( 
+        
+
         <>
         {
             isListEmpty &&
             <footer className="todo-app__footer" id="todo-footer">
-                <div className="todo-app__total">{ currentId - 1} left</div>
+                <div className="todo-app__total">{ totalNum - completedNum/2 } left</div>
                 <ul className="todo-app__view-buttons">
                     <button>All</button>
                     <button>Active</button>
