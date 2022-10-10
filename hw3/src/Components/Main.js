@@ -15,7 +15,7 @@ const Main = (
             setIsListEmpty(true);
         }
         console.log(list);
-        // console.log(totalNum, completedNum);
+        console.log(totalNum, completedNum);
     }, [list, isListEmpty, setIsListEmpty])
     
     // 處理 input 後按下 Enter 後如何處理
@@ -38,31 +38,36 @@ const Main = (
     // 處理 checkbox 按下後會更新內容的狀態 & 更新 completed task 的數量
     const handleCheck = (e) => {
         const id = parseInt(e.target.id);
+        let tmp = 0;
+        for (let i = 0; i < list.length; i++) {
+            if (id === list[i].id) break;
+            tmp++;
+        }
         setList(list => {
-            if (list[id].isCompleted === false) {
+            if (list[tmp].isCompleted === false) {
                 setCompletedNum(++completedNum);
                 return [
-                    ...list.slice(0, id),
+                    ...list.slice(0, tmp),
                     {
-                        id: list[id].id,
-                        content: list[id].content,
+                        id: list[tmp].id,
+                        content: list[tmp].content,
                         isCompleted: true,
                         style: "todo-app__item-detail-completed"
                     },
-                    ...list.slice(id+1)
+                    ...list.slice(tmp+1)
                 ]
             }
             else {
                 setCompletedNum(--completedNum);
                 return [
-                    ...list.slice(0, id),
+                    ...list.slice(0, tmp),
                     {
-                        id: id,
-                        content: list[id].content,
+                        id: tmp,
+                        content: list[tmp].content,
                         isCompleted: false,
                         style: "todo-app__item-detail"
                     },
-                    ...list.slice(id+1)
+                    ...list.slice(tmp+1)
                 ]
             }
         })
@@ -70,20 +75,25 @@ const Main = (
 
     const handleDelete = (e) => {
         const id = parseInt(e.target.id);
+        let tmp = 0;
+        for (let i = 0; i < list.length; i++) {
+            if (id === list[i].id) break;
+            tmp++;
+        }
         setList(list => {
-            if (list[id].isCompleted === true) {
+            if (list[tmp].isCompleted === true) {
                 setCompletedNum(previousNum => previousNum - 1);
                 setTotalNum(previousNum => previousNum - 1);
                 return([
-                    ...list.slice(0,id),
-                    ...list.slice(id+1)
+                    ...list.slice(0,tmp),
+                    ...list.slice(tmp+1)
                 ])
             }
             else {
                 setTotalNum(previousNum => previousNum - 1);
                 return([
-                    ...list.slice(0,id),
-                    ...list.slice(id+1)
+                    ...list.slice(0,tmp),
+                    ...list.slice(tmp+1)
                 ])
             }
         });
