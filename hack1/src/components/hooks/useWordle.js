@@ -40,26 +40,14 @@ const useWordle = (solution) => {
             return;
         }
         // (3) Press Enter, store curGuess to guesses, reset curGuess and update parameters .
-        setTurn(turn => turn + 1)
-        let guess =
-        [
-            [{char: curGuess[0], color: 'grey'}],
-            [{char: curGuess[1], color: 'grey'}],
-            [{char: curGuess[2], color: 'grey'}],
-            [{char: curGuess[3], color: 'grey'}],
-            [{char: curGuess[4], color: 'grey'}]
-        ]
-            guesses[turn] = guess;
-        console.log(guesses[turn]);
-
-        // setGuesses()
+        
         
         if (curGuess === solution) {
             setIsCorrect(true);
         }
         setCurGuess('');
-
-        printTest()
+        setTurn(turn => turn + 1)
+        // printTest()
         // setGuesses(newGuesses);
         // console.log("Press Enter!!!! Store and reset curGuess!");
         // TODO 4: Check each wordbox's color in `curGuess` and update `guess`, `turn` and `curGuess`
