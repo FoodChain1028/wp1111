@@ -12,7 +12,16 @@ import React from 'react';
 
 const CurRow = ({ curGuess, rowIdx }) => {
     let letters = curGuess.split('');
-    let filled = [ '', '', '', '', '']
+    let filled = []
+    for (let i = 0; i < letters.length; i++) {
+        if (letters[i] !== '') {
+            filled.push(' filled')
+        }
+        else {
+            filled.push('')
+        }
+    }
+    
     return (
         <div className='Row-container'>
             {/* TODO 3: Row Implementation -- CurRow */}
