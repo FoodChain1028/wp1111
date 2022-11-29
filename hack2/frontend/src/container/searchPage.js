@@ -9,11 +9,12 @@
 import React, { useState, useEffect } from 'react'
 import '../css/searchPage.css'
 import { useNavigate, useLocation } from 'react-router-dom'
-import resBlock from '../components/resBlock'
 import axios from 'axios'
 const instance = axios.create({
     baseURL: 'http://localhost:4000/api'
 })
+
+const price = ['$', '$$', '$$$']
 
 const SearchPage = () => {
     const { state } = useLocation();
@@ -28,21 +29,24 @@ const SearchPage = () => {
                 sortBy: state.sortBy
             }
         });
-        console.log(data.content)
-        setRestaurant(data.content)
+        console.log(data.contents)
+        setRestaurant(data.contents)
+        return data.contents
     }
 
     useEffect(() => {
         getRestaurant()
-        // console.log(state.priceFilter, state.mealFilter, state.typeFilter, state.sortBy)
+        console.log('Search Page Console: ', state.priceFilter, state.mealFilter, state.typeFilter, state.sortBy)
     }, [state.priceFilter, state.mealFilter, state.typeFilter, state.sortBy])
 
 
     const navigate = useNavigate();
     const ToRestaurant = (id) => {
         // TODO Part III-1: navigate the user to restaurant page with the corresponding id
-        
+        console.log(id)
+        navigate('/restaurant/' + id)
     }
+
     const getPrice = (price) => {
         let priceText = ""
         for (let i = 0; i < price; i++)
@@ -58,19 +62,21 @@ const SearchPage = () => {
             {
                 restaurants.map((item) => (
                     // TODO Part I-2: search page front-end
-                    <div className="resBlock" id={item.id} key={item._id}>
+                    <>
+                    <div className="resBlock" id={item.id} key={item.id} onClick={() => {ToRestaurant(item.id)}}>
                         <div className="resImgContainer">
                             <img src={item.img} className="resImg" />
                         </div>
                         <div className="resInfo">
                             <div className="title">
                                 <p className="name">{item.name}</p>
-                                <p className="price">{item.price}</p>
-                                <p className="distance">{item.distance}</p>
+                                <p className="price">{price[item.price - 1]}</p>
+                                <p className="distance">{item.distance / 1000 + ' km'}</p>
                             </div>
-                            <p className="description">{item.tag}</p>
+                            <p className="description">{item.tag.join(', ')}</p>
                         </div>
-                    </div>    
+                    </div>
+                    </>  
                 ))
             }
         </div>

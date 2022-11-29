@@ -35,11 +35,18 @@ const Filter = ({ priceFilter, setPriceFilter, mealFilter, setMealFilter, typeFi
     const modifyFilter = (key, filter) => {
         // TODO Part II-1: change filter state on clicking the pertaining checkboxes
         // console.log(key, filter)
-        if (key === '$') filter.push(1)
-        else if (key === '$$') filter.push(2)
-        else if (key === '$$$') filter.push(3)
-        else filter.push(key)
-        // console.log(filter)
+        if (filter.includes(key)) {
+            const index = filter.indexOf(key)
+            if (index > -1) {
+                filter.splice(index, 1)
+            }
+            // console.log('43: ',filter)
+            return filter;
+        } else {
+            filter.push(key)
+        }
+
+        // console.log('49: ', filter)
         return filter
     }
 
@@ -52,6 +59,7 @@ const Filter = ({ priceFilter, setPriceFilter, mealFilter, setMealFilter, typeFi
 
     const modifyMealFilter = (key) => {
         mealFilter = modifyFilter(key, mealFilter)
+        // console.log(key)
         setMealFilter(mealFilter)
         setDisplay(getTagString())
     }
@@ -61,10 +69,6 @@ const Filter = ({ priceFilter, setPriceFilter, mealFilter, setMealFilter, typeFi
         setTypeFilter(typeFilter)
         setDisplay(getTagString())
     }
-
-    useEffect(() => {
-        console.log(priceFilter, setPriceFilter, mealFilter, setMealFilter, typeFilter, setTypeFilter)
-    }, [priceFilter, setPriceFilter, mealFilter, setMealFilter, typeFilter, setTypeFilter])
 
     return (
         <div className='filterDetail'>

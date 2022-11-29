@@ -27,9 +27,6 @@ const NavBar = () => {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log(priceFilter)
-    }, [priceFilter])
     const changeDollarSignToInt = () => {
         var clone = JSON.parse(JSON.stringify(priceFilter))
         clone = clone.map((ele)=>{
@@ -45,13 +42,12 @@ const NavBar = () => {
         // FIXME - Modify below
         navigate('/search', {
             state: {
-                priceFilter: {priceFilter},
-                mealFilter: {mealFilter},
-                typeFilter: {typeFilter},
-                sortBy: {sortMethod}
+                priceFilter: priceFilter,
+                mealFilter: mealFilter,
+                typeFilter: typeFilter,
+                sortBy: sortMethod
             }
         });
-
     };
     return (
         <div className='navBarContainer'>
