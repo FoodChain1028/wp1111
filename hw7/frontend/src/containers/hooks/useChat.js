@@ -16,6 +16,11 @@ const ChatContext = createContext({
 });
 
 const client = new WebSocket('ws://localhost:4000');
+client.onopen = () => console.log("Connected to DB.");
+
+client.onclose = () => {
+    alert("Server Disconnected!!!!")
+}
 
 const ChatProvider = (props) => {
     const [status, setStatus] = useState({});
@@ -23,24 +28,33 @@ const ChatProvider = (props) => {
     const [signedIn, setSignedIn] = useState(false); 
     const [me, setMe] = useState( savedMe || '');
 
+
     client.onmessage = (byteString) => {
         const { data } = byteString;
-        const [task, payload] = JSON.parse(data);
-        console.log(`Recieved task:${task}`);
+        const {task, payload} = JSON.parse(data);
+        console.log(`hooks/useChat: Recieved task:${task}, Payload: ${data}`);
         switch (task) {
-            case "output" : { 
-                setMessages(() => [...messages, ...payload]);
+            case "MESSAGE": {
+                setMessages(() => [
+                    ...messages, {name: payload.message.name, body: payload.message.body}
+                ]);
+                console.log(`hooks/useChat: MESSAGE: ${messages}`);
                 break;
             }
-            case "status": {
+
+            case "CHAT": {
+                console.log(`hooks/useChat: CHAT: ${payload}`);
+                setMessages(payload);
+                break;
+            }
+
+            case "STATUS": {
                 setStatus(payload);
                 break;
             }
-            case "init": {
-                setMessages(() => [...messages, ...payload]);
-                break;
-            }
-            case "cleared": {
+
+            case "CLEAR": {
+                console.log(`hooks/useChat: CLEAR`)
                 setMessages([]);
                 break;
             }
@@ -50,7 +64,6 @@ const ChatProvider = (props) => {
 
     const sendData = async (data) => {
         client.send(JSON.stringify(data));
-        console.log(`Message sent to backend`);
     };
 
     // 通知後端現在要開始聊天
@@ -58,27 +71,31 @@ const ChatProvider = (props) => {
         if (!name || !to) {
             throw new Error("Name or to required.");
         }
-        sendData([
-            "CHAT",
-            {name, to}
-        ]);
+        sendData({
+            type: "CHAT",
+            payload: {name, to}
+        });
     }
 
     // 把 data 送到後端
-    const sendMessage = (name, to, body) => {
-        console.log(name, to, body)
+    const sendMessage = (payload) => {
+        const {name, to, body} = payload;
         if (!name || !to || !body) {
             throw new Error("name or to or body required.");
         }
+        console.log(name, to, body)
         // update messages and status
-        sendData([
-            "MESSAGE",
-            { name, to, body}
-        ]);
+        sendData({
+            type: "MESSAGE", 
+            payload: { name, to, body}
+        });
     }
 
-    const clearMessages = () => {
-        sendData(["clear"]);
+    const clearMessages = (name, to) => {
+        sendData({
+            type: "CLEAR",
+            payload: {name, to}
+        });
     }
 
     const displayStatus = (payload) => {

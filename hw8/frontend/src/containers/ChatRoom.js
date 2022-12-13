@@ -28,7 +28,7 @@ const FootRef = styled.div`
 `;
 
 const ChatRoom = () => {
-    const { me, messages, sendMessage, displayStatus, startChat, clearMessages } = useChat();
+    const { me, messages, setMessages, setFriend, sendMessage, displayStatus, startChat } = useChat();
     const [chatBoxes, setChatBoxes] = useState([]); // { label: 對不同人聊天室的標記, children: 該聊天室下的訊息, key } 
     const [activeKey, setActiveKey] = useState(''); // 目前 hightlight 的聊天室
 
@@ -44,8 +44,8 @@ const ChatRoom = () => {
         ) : (
             <ChatBoxWrapper>
             {
-                chat.map(({name, body}, i) => (
-                    <Message isMe={(name === me)} message={ body } key={i} />
+                chat.map(({sender, body}, i) => (
+                    <Message isMe={(sender === me)} message={ body } key={i} />
                 ))
             }
             <FootRef ref={msgFooter} />
@@ -97,7 +97,6 @@ const ChatRoom = () => {
     };
 
     useEffect(() => {
-        console.log("line 105: " + messages);
         messages.forEach(element => {
             console.log(element);
         });
@@ -105,7 +104,7 @@ const ChatRoom = () => {
 
         if (activeChatBox?.children) {
             activeChatBox.children = displayChat(
-                messages.filter(({name, body}) => (name === activeKey) || (name === me))
+                messages.filter(({sender, body}) => (sender === activeKey) || (sender === me))
             )
         }
 
@@ -129,10 +128,21 @@ const ChatRoom = () => {
                     type="editable-card"
                     activeKey={activeKey}
 
-                    onChange={(key) => {
+                    onChange={ async (key) => {
+                        
                         setActiveKey(key);
-                        extractChat(key);
-                        startChat(me, key);
+                        setFriend(key)
+
+                        const data = await startChat({
+                            variables: {
+                                name1: me,
+                                name2: key,
+                            }
+                        });
+                        const msgs = data.data.createChatBox.messages 
+                        setMessages(msgs);
+                        // extractChat(key);
+                        // startChat(me, key);
                     }}
 
                     onEdit={(targetKey, action) => {
@@ -145,11 +155,17 @@ const ChatRoom = () => {
                 />
                 <ChatModal 
                     open={modalOpen}
-                    onCreate={({ name }) => {
+                    onCreate= { async ({ name }) => {
                         setActiveKey(createChatBox(name));
                         setModalOpen(false);
-                        startChat(me, name);
-                        // extractChat(name, messages);
+                        const data = await startChat({
+                            variables: {
+                                name1: me,
+                                name2: name,
+                            }
+                        });
+                        const msgs = data.data.createChatBox.messages 
+                        setMessages(msgs);
                     }}
                     onCancel={() => {
                         setModalOpen(false);
@@ -177,9 +193,14 @@ const ChatRoom = () => {
                             setMsg('')
                             return;
                         }
-                        console.log(messages);
                         // extractChat(me)
-                        sendMessage({name: me, to: activeKey, body: msg});
+                        sendMessage({
+                            variables: {
+                                name: me,
+                                to: activeKey,
+                                body: msg
+                            }
+                        });
                         setMsg('');
                         setMsgSent(true);
                     }}

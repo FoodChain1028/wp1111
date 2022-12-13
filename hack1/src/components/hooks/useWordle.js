@@ -40,8 +40,24 @@ const useWordle = (solution) => {
             return;
         }
         // (3) Press Enter, store curGuess to guesses, reset curGuess and update parameters .
+        const set =   { char: curGuess[0], color: 'grey'},
+                      { char: curGuess[0], color: 'grey'},
+                      { char: curGuess[0], color: 'grey'},
+                      { char: curGuess[0], color: 'grey'},
+                      { char: curGuess[0], color: 'grey'}
         
-        
+        setGuesses((previousList) => {
+            return[
+                ...previousList,
+                [
+                    {char: curGuess[0], color: 'grey'},
+                    {char: curGuess[0], color: 'grey'},
+                    {char: curGuess[0], color: 'grey'},
+                    {char: curGuess[0], color: 'grey'},
+                    {char: curGuess[0], color: 'grey'}
+                ]
+            ]
+        })
         if (curGuess === solution) {
             setIsCorrect(true);
         }
@@ -54,10 +70,6 @@ const useWordle = (solution) => {
         // Hint: check green first, and then check yellow.
 
         // add the formatted guess generated into guesses.
-        
-        // turn += 1
-        
-        // set curGuess to default
 
 
         // TODO 5: update parameters, check each char usage and show in `Keyboard` and reset `curGuess`.

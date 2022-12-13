@@ -17,10 +17,15 @@ const db = mongoose.connection;
 db.once('open', () => {
     console.log("MongoDB connected!");
     wss.on('connection', (ws) => {
-        // ws.id = uuidv4();
-        // ws.box = '';
+        // current active chatBox
+        ws.id = uuidv4(); 
+        ws.box = '';
         ws.onmessage = wsConnect.onMessage(ws);
     });
+
+    wss.on("close", (ws) => {
+        console.log("SERVER CLOSED!")
+    })
 });
 
 const PORT = process.env.PORT || 4000;
