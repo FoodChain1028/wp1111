@@ -45,7 +45,7 @@ function Row({
         // TODO 4 Use `updateItem` and pass the correct variables
         input: {
           id: item.id,
-        ...formData
+          ...formData
         },
         // TODO End
         onError: (err) => {
