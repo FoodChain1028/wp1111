@@ -15,11 +15,12 @@ const httpLink = new HttpLink({
 });
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: 'ws://localhost:4000/subscriptions',
+  url: 'ws://localhost:4000/graphql',
     options: {
-    lazy: true,
-  },
-}));
+      reconnect: true,
+      lazy: true,
+    }}
+  ));
 
 const splitLink = split(({ query }) => {
     const definition = getMainDefinition(query);
@@ -29,9 +30,18 @@ const splitLink = split(({ query }) => {
     );
   }, wsLink, httpLink,);
 
+
 const client = new ApolloClient({
   link: splitLink,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache({
+    typePolicies: {
+      chatBox: {
+        messages: {
+          keyFields: ["sender"]
+        }
+      }
+    }
+  })
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

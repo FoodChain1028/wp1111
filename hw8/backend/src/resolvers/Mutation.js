@@ -5,30 +5,31 @@ const makeName = (x, y) => {
 }
 
 const checkOutChatBox = async (name1, name2) => {
+    // if (name1 === "" || name2 === "") return;
+    
     const name = makeName(name1, name2);
     console.log(name);
     let box = await ChatBoxModel.findOne({ name });
     if (!box)
         box = await new ChatBoxModel({ name }).save();
     return box
-    // .populate
-    //         (["users", {path: 'messages', populate: 'sender' }]);
 }
 
 const Mutation = {
     createChatBox: async (parent, {name1, name2}) => {
         return await checkOutChatBox(name1, name2);
     },
-    createMessage: async (parent, { name, to, body }, { pubsub } ) => {
-        const chatBox = await checkOutChatBox(name, to);
-        const newMsg = { sender: name, body };
+    
+    createMessage: async (parent, { from, to, body }, { pubsub } ) => {
+        const chatBox = await checkOutChatBox(from, to);
+        const newMsg = { sender: from, body };
         chatBox.messages.push(newMsg);
         await chatBox.save();
 
-        const chatBoxName = makeName(name, to);
-        pubsub.publish(`chatBox ${chatBoxName}`, {
-            message: newMsg,
-        });
+        const chatBoxName = makeName(from, to);
+        pubsub.publish(`chatBox ${chatBoxName}`, 
+            { message: newMsg }
+        );
         return newMsg;
     }
 }

@@ -18,5 +18,9 @@
     "@babel/plugin-transform-arrow-functions": "^7.18.6",
     "@babel/preset-env": "^7.20.2",
     "dotenv-defaults": "^5.0.2"
+  },
+  "scripts": {
+    "start": "cd frontend && yarn start",
+    "server": "cd backend && yarn server"
   }
 }

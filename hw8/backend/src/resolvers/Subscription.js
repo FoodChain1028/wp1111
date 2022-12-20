@@ -4,7 +4,7 @@ const makeName = (x, y) => {
 
 const Subscription = {
     message: {
-      subscribe: (parent, { from, to }, { pubsub }) => {
+      subscribe: async (parent, { from, to }, { pubsub }) => {
         const chatBoxName = makeName(from, to);
         return pubsub.subscribe(`chatBox ${chatBoxName}`);
   }, },

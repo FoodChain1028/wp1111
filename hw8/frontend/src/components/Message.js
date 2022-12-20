@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Tag } from 'antd';
 
 const StyledMessage = styled.div`
     display: flex;
@@ -21,7 +20,7 @@ const StyledMessage = styled.div`
 `;
 
 const Message = ({isMe, message}) => {
-    console.log(isMe, message)
+    // console.log(isMe, message)
     return(
         <StyledMessage isMe={isMe}>
             <p>

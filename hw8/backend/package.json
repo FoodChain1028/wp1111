@@ -23,6 +23,6 @@
     "dotenv-defaults": "^5.0.2"
   },
   "scripts": {
-    "start": "nodemon src/index.js --ext js,graphql --exec babel-node"
+    "server": "nodemon src/index.js --ext js,graphql --exec babel-node"
   }
 }

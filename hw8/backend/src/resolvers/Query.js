@@ -2,9 +2,8 @@ const makeName = (x, y) => {
   return [x, y].sort().join('_');
 }
 
-
 const Query = {
-  chatbox: async (parent, { name1 , name2 }, { ChatBoxModel }) => {
+  chatBox: async (parent, { name1 , name2 }, { ChatBoxModel }) => {
     const name = makeName(name1, name2);
     console.log(name);
     let box = await ChatBoxModel.findOne({ name });
