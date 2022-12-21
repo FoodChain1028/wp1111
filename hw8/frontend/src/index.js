@@ -5,17 +5,18 @@ import App from "./containers/App";
 import { ChatProvider } from "./containers/hooks/useChat"
 import reportWebVitals from "./reportWebVitals";
 import "antd/dist/reset.css";
+
 import { ApolloClient, InMemoryCache, ApolloProvider, split, HttpLink } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql'
+  uri: 'http://localhost:4001/graphql'
 });
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: 'ws://localhost:4000/graphql',
+  url: 'ws://localhost:4001/graphql',
     options: {
       reconnect: true,
       lazy: true,
@@ -33,15 +34,7 @@ const splitLink = split(({ query }) => {
 
 const client = new ApolloClient({
   link: splitLink,
-  cache: new InMemoryCache({
-    typePolicies: {
-      chatBox: {
-        messages: {
-          keyFields: ["sender"]
-        }
-      }
-    }
-  })
+  cache: new InMemoryCache({})
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

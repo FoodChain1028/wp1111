@@ -18,8 +18,10 @@ const ChatContext = createContext({
     startChat: () => {},
     sendMessage: () => {},
     clearMessages: () => {},
-    data: {},
+    // data: {},
+    getData: {},
     loading: false,
+    subscribe: () => {},
     subscribeToMore: () => {},
 
 });
@@ -33,13 +35,12 @@ const ChatProvider = (props) => {
     const [friend, setFriend] = useState('');
 
     // const [getChatBox, {data_2}] = useLazyQuery()
-    const { data, loading, subscribeToMore } = useQuery( CHATBOX_QUERY, {
+    const { data: getData, loading, error, subscribeToMore } = useQuery( CHATBOX_QUERY, {
         variables: {
             name1: me,
             name2: friend
         },
-    });
-
+    }); 
     const displayStatus = (payload) => {
         if (payload.msg) {
           const {type, msg} = payload;
@@ -72,6 +73,28 @@ const ChatProvider = (props) => {
         }
     }, [me, signedIn]);
 
+    const subscribe = () => {
+        subscribeToMore({
+            document: MESSAGE_SUBSCRIPTION,
+            variables: { from: me, to: friend },
+            updateQuery: (prev, { subscriptionData }) => {
+                console.log("SUBSCRIBE!!!!!!!!!!!!!!");
+                console.log(me, friend);
+                console.log(subscriptionData);
+
+                if (!subscriptionData.data) return prev;
+                const newMessage = subscriptionData.data.message;
+                const chatBoxName = makeName(me, friend); 
+                return ({
+                    chatBox: {
+                        name: chatBoxName,
+                        messages: [...prev.chatBox.messages, newMessage],
+                    }
+                        
+                });
+            },
+        });
+    }
     useEffect(() => {
         try {
             subscribeToMore({
@@ -79,13 +102,15 @@ const ChatProvider = (props) => {
                 variables: { from: me, to: friend },
                 updateQuery: (prev, { subscriptionData }) => {
                     console.log("SUBSCRIBE!!!!!!!!!!!!!!");
-                    if (!prev) return;
+                    console.log(me, friend);
+                    console.log(subscriptionData);
+
                     if (!subscriptionData.data) return prev;
                     const newMessage = subscriptionData.data.message;
                     const chatBoxName = makeName(me, friend); 
                     return Object.assign({
                         chatBox: {
-                            name: chatBoxName,
+                            // name: chatBoxName,
                             messages: [...prev.chatBox.messages, newMessage],
                         },
                     });
@@ -109,8 +134,10 @@ const ChatProvider = (props) => {
                 sendMessage,
                 startChat,
                 displayStatus,
-                data,
+                // data,
+                getData,
                 loading,
+                subscribe,
                 subscribeToMore,
 
             }} 

@@ -4,7 +4,7 @@ import httpServer from './server';
 
 mongo.connect();
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT |  4001;
 httpServer.listen({ port }, () => {
     console.log(`App listening on port ${port}!`);
 });

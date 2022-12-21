@@ -1,6 +1,6 @@
 // 建立 GraphQL server
 import * as fs from 'fs'
-import { createServer } from 'node:http'
+import { createServer } from 'http'
 import { WebSocketServer } from 'ws'
 import { createPubSub, createSchema, createYoga } from 'graphql-yoga'
 import { useServer } from 'graphql-ws/lib/use/ws'
@@ -10,7 +10,7 @@ import Mutation from './resolvers/Mutation';
 import Subscription from './resolvers/Subscription';
 import ChatBox from './resolvers/ChatBox';
 
-const pubsub = createPubSub();
+const pubSub = createPubSub();
 
 const yoga = createYoga({
   schema: createSchema({
@@ -28,7 +28,7 @@ const yoga = createYoga({
 
   context: {
     ChatBoxModel,
-    pubsub,
+    pubSub,
   }, 
   
   graphiql: {
@@ -73,6 +73,3 @@ useServer({
 }, wsServer)
 
 export default httpServer;
-// const server = createServer(yoga)
-
-// export default server

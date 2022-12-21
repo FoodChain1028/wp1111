@@ -29,11 +29,10 @@ const ChatBoxWrapper = styled.div`
   height: 20px;
   `;
   
-  const ChatRoom = () => {
-    
-  const { me, friend, messages, sendMessage, displayStatus, startChat, setFriend, setMessages, data, loading, subscribeToMore } = useChat();
-    
-    
+const ChatRoom = () => {
+  
+  const { me, friend, messages, sendMessage, displayStatus, startChat, setFriend, setMessages, getData, loading, subscribe } = useChat();
+  
   const [chatBoxes, setChatBoxes] = useState([]); //{label, children, key}
   const [activeKey, setActiveKey] = useState("");
   
@@ -41,18 +40,14 @@ const ChatBoxWrapper = styled.div`
   const [msg, setMsg] = useState("");
   const [isBoxChange, setIsBoxChange] = useState(false); 
 
-  const [getChatBox, { lazyData, lazyLoading }] = useLazyQuery(CHATBOX_QUERY);
-
   const msgFooter = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const renderChat = (chat) => (  
+  const renderChat = (chat) => {
+    return (   
       <ChatBoxWrapper>
-            { loading  ? 
-              <p style={{ color: '#ccc' }}>Loading...</p>
-              :
+            { 
               chat.length === 0 ? 
-                
               (<p style={{ color: '#ccc' }}>No messages...</p> ): 
                 
                 ( 
@@ -64,7 +59,8 @@ const ChatBoxWrapper = styled.div`
             }
         <FootRef ref={ msgFooter }/>
       </ChatBoxWrapper>
-  ); 
+    );
+  }; 
 
   const extractChat = (friend) => {
     return renderChat(
@@ -85,7 +81,6 @@ const ChatBoxWrapper = styled.div`
     const chats = extractChat(friend);
     setChatBoxes([...chatBoxes,
       { label: friend, children: chats, key: friend }]);
-    setMsgSent(true);
     return friend;
   };
 
@@ -152,33 +147,21 @@ const ChatBoxWrapper = styled.div`
     }, [msgSent, messages, setActiveKey, activeKey]
   );
 
-  // useEffect(() => {
-  //   console.log(1);
-  //   if (loading) console.log("Loading!");
-  //   if (!data) return;
-  //   else if (data.chatBox.name.length < 3) return;
-  //   else {
-  //     // console.log(lastData);
-  //     // if (lastData?.chatBox?.messages?.length === data?.chatBox.messages.length ) return;
-  //     // setLastData(data);
-  //     const msgs = data.chatBox.messages.filter(({sender}) => (sender === me || sender === activeKey));
-  //     setMessages(msgs);
-  //   }
-  //   setIsBoxChange(false)
-  // }, [isBoxChange]);
-
   useEffect(() => {
-    console.log(2);
-    if (loading) console.log("Loading!");
-    if (!data) return;
-    else if (data.chatBox.name.length < 3) return;
-    else {
-      const msgs = data.chatBox.messages.filter(({sender}) => (sender === me || sender === activeKey));
-      setMessages(msgs);
-    }
+    // console.log(getData);
+    if (!getData) return;
+    else if (getData.chatBox.name.length < 3) return;
+    
+    const msgs = getData.chatBox.messages
+    setMessages(msgs);
+    
     setMsgSent(false);
     scrollToBottom();
-  }, [msgSent, data]);
+  }, [msgSent, isBoxChange]);
+  
+  const makeName = (x, y) => {
+    return [x, y].sort().join('_');
+  }
 
   return (
     <>
@@ -197,6 +180,7 @@ const ChatBoxWrapper = styled.div`
               setModalOpen(true);  
             else if (action === 'remove') {
               setActiveKey(removeChatBox(targetKey, activeKey))
+            
           }}}
           items={chatBoxes}
         />
@@ -208,14 +192,12 @@ const ChatBoxWrapper = styled.div`
             onCancel={() => { setModalOpen(false) }}
         />      
 
-        {/* Type message */}
         <Input.Search
           value = {msg}
           onChange = {(e) => setMsg(e.target.value)}
           enterButton="Send"
           placeholder="Type a message here..."
-          // ref = {bodyRef}
-          onSearch = {(msg) => {
+          onSearch = {(msg) => { 
             if(activeKey === ""){
               displayStatus({
                 type: 'error',
@@ -231,13 +213,24 @@ const ChatBoxWrapper = styled.div`
               return
             }
             else{
-              sendMessage({ variables:{from: me, to: activeKey, body: msg }});
+              sendMessage({ 
+                variables:{
+                  from: me, 
+                  to: activeKey, 
+                  body: msg 
+                },
+                onError: (err) => {
+                  console.error(err);
+                },
+              });
               setMsg('');
               setMsgSent(true);
               displayStatus({
                 type:'success',
                 msg: 'Successfully Sent!!!'
               })
+              subscribe();
+              scrollToBottom();
             }
             }}   
         ></Input.Search>
