@@ -1,10 +1,10 @@
-import '../App.css'
-// import { Button, Input, message, Tag } from 'antd'
-import styled from 'styled-components';
-import { useEffect, useState, useRef } from 'react';
-import { useChat } from './hooks/useChat';
-import ChatRoom from './ChatRoom';
-import SignIn from './SignIn';
+import './App.css'
+import { useState, useEffect, useRef } from 'react'
+import styled from 'styled-components'
+import { Button, Input, message, Tag } from 'antd'
+import { useChat } from './hooks/useChat'
+import ChatRoom from './ChatRoom'
+import SignIn from './SignIn'
 
 const Wrapper = styled.div`
   display: flex;
@@ -17,17 +17,17 @@ const Wrapper = styled.div`
 `;
 
 const App = () => {
-  const { me, status, signedIn, displayStatus } = useChat();
-  
-  useEffect(() => {
-    displayStatus(status)
+  const { status, signedIn, displayStatus } = useChat();
+
+  useEffect(() =>{
+    displayStatus(status);
   }, [status]);
 
   return (
-    <Wrapper> 
-      { signedIn ? <ChatRoom /> : <SignIn me={me} /> } 
+    <Wrapper>
+      {signedIn ? <ChatRoom /> : <SignIn />}
     </Wrapper>
-  ) 
+  )
 }
 
-export default App;
+export default App

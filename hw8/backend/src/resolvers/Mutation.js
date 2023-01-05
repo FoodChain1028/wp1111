@@ -1,34 +1,27 @@
-import { ChatBoxModel } from "../models/chatbox";
-
-const makeName = (x, y) => {
-    return [x, y].sort().join('_');
-}
-
-const checkOutChatBox = async (name1, name2) => {
-    const name = makeName(name1, name2);
-    console.log(name);
-    let box = await ChatBoxModel.findOne({ name });
-    if (!box)
-        box = await new ChatBoxModel({ name }).save();
-    return box
-}
+import ChatBox from "./ChatBox";
+import { makeName, checkOutChatBox } from "./utils";
 
 const Mutation = {
-    createChatBox: async (parent, {name1, name2}) => {
-        return await checkOutChatBox(name1, name2);
+    createChatBox: async (parent, { name1, name2 }) => {
+        return await checkOutChatBox(makeName(name1, name2));
     },
-    
-    createMessage: async (parent, { from, to, body }, { pubSub } ) => {
-        const chatBox = await checkOutChatBox(from, to);
-        const newMsg = { sender: from, body };
+    createMessage: async (parent, { name, to, body }, { pubsub }) => {
+        const chatBoxName = makeName(name, to);
+        const chatBox = await checkOutChatBox(chatBoxName);
+        const newMsg = { sender: name, body };
         chatBox.messages.push(newMsg);
         await chatBox.save();
-        const chatBoxName = makeName(from, to);
-        pubSub.publish(`chatBox ${chatBoxName}`, 
-            { message: newMsg }
-        );
-        return newMsg;
-    }
-}
 
-export { Mutation as default }
+        pubsub.publish(`chatBox ${chatBoxName}`, { message: newMsg });
+
+        return newMsg;
+    },
+    // createMessage: async (parent, { name, to, body }, { pubsub } )
+    // => {
+    //     const chatBox = await checkOutChatBox(makeName(name, to), ChatBoxModel);
+
+    //     // ChatBox.messages
+    // }
+};
+
+export default Mutation;

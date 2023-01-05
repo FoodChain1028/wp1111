@@ -1,9 +1,10 @@
 import { Modal, Form, Input } from 'antd';
 
-const ChatModal = ({ open, onCreate, onCancel }) => {
+const ChatModal = ({ open, onCreate, onCancel, displayStatus }) => {
     const [form] = Form.useForm();
+
     return (
-        <Modal 
+        <Modal
             open={open}
             title="Create a new chat room"
             okText="Create"
@@ -17,12 +18,14 @@ const ChatModal = ({ open, onCreate, onCancel }) => {
                         onCreate(values);
                     })
                     .catch((e) => {
-                        // if (Object.keys(e).some((i) => i === "errorFields"))
-                        //     e = e.errorFields[0].errors[0];
-                        window.alert(e);
+                        // window.alert(e);
+                        displayStatus({
+                            type: 'error',
+                            msg: 'Please enter a name of your friend.'
+                        })
                     });
             }}
-        >   
+        >
             <Form form={form} layout="vertical" name="form_in_modal">
                 <Form.Item
                     name="name"
@@ -30,15 +33,15 @@ const ChatModal = ({ open, onCreate, onCancel }) => {
                     rules={[
                         {
                             required: true,
-                            message: 'Error: Please enter the name of the person to chat!'
-                        }
+                            message: 'Error: Please enter the name of the person to chat',
+                        },
                     ]}
                 >
-                    <Input/>
-                </Form.Item>                
+                    <Input />
+                </Form.Item>
             </Form>
         </Modal>
     );
-}
+};
 
 export default ChatModal;

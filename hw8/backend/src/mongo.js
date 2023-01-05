@@ -1,6 +1,5 @@
-// 建立 MongoDB 連線
-import mongoose from "mongoose";
-import dotenv from "dotenv-defaults";
+import mongoose from 'mongoose';
+import dotenv from 'dotenv-defaults';
 
 export default {
     connect: () => {
@@ -9,16 +8,11 @@ export default {
             console.error("Missing MONGO_URL!!!");
             process.exit(1);
         }
-        mongoose.set('strictQuery', true);
-        mongoose
-            .connect(process.env.MONGO_URL, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-            })
-            .then((res) => console.log("mongo db connection created"));
-        
-        mongoose.connection.on('error',
-            console.error.bind(console, 'connection error:')
-        );
+        mongoose.connect(process.env.MONGO_URL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+        .then((res) => console.log("mongo db connection created"));
+        mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
     }
 };

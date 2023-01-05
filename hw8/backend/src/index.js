@@ -1,10 +1,9 @@
-// backend 的入口
-import mongo from './mongo';
-import httpServer from './server';
+import server from "./server";
+import mongo from "./mongo";
 
 mongo.connect();
+const PORT = process.env.PORT || 4000;
 
-const port = process.env.PORT |  4001;
-httpServer.listen({ port }, () => {
-    console.log(`App listening on port ${port}!`);
+server.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
 });

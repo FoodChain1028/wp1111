@@ -51,6 +51,7 @@ function Home() {
       subscribeToMore({
         document: ITEM_UPDATED_SUBSCRIPTION,
         updateQuery: (prev, { subscriptionData }) => {
+          console.log("AAAAAAA");
           if (!subscriptionData.data) return prev;
           const updatedItem = subscriptionData.data.itemUpdated;
           return {
@@ -84,7 +85,7 @@ function Home() {
   if (error) {
     // eslint-disable-next-line no-console
     console.error(error);
-    return (<p>Error :(</p>);
+    return (<p>Error :</p>);
   }
 
   const { items } = itemsData;

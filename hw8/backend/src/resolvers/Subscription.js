@@ -1,13 +1,12 @@
-const makeName = (x, y) => {
-    return [x, y].sort().join('_');
-}
+import { makeName } from './utils';
 
 const Subscription = {
     message: {
-      subscribe: (parent, { from, to }, { pubSub }) => {
-        const chatBoxName = makeName(from, to);
-        return pubSub.subscribe(`chatBox ${chatBoxName}`);
-  }, },
+        subscribe: (parent, { from, to}, { pubsub} ) => {
+            const chatBoxName = makeName(from, to);
+            return pubsub.subscribe(`chatBox ${chatBoxName}`);
+        },
+    },
 };
 
-export {Subscription as default};
+export default Subscription;

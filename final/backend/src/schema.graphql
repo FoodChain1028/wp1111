@@ -1,0 +1,74 @@
+type User {
+    address: String!
+    name: String
+}
+
+type Question {
+  address: String!
+  questionId: Int!
+  isCorrect: Boolean!
+  answerRecord:[AnswerRecord]
+}
+
+type QuestionData {
+  questionId: Int!
+  name: String!
+  description: String!
+  example1: String!
+  example2: String!
+  code: String!
+  others: String!
+  answer: String!
+}
+
+type AnswerRecord {
+  tryId: Int!
+  isCorrect: Boolean!
+  record: String!
+}
+
+type Mutation {
+  createUser(address: String!): User!
+
+  createQuestion(
+    address: String!, 
+    questionId: Int!
+  ): Question!
+  
+  updateQuestionStatus(
+    address: String!, 
+    questionId: Int!
+  ): Question!
+
+  createQuestionData(
+    questionId: Int!, 
+    name: String!, 
+    description: String!, 
+    example1: String!, 
+    example2: String!, 
+    code: String!, 
+    others: String!
+    answer: String!
+  ): QuestionData!
+
+  updateAnswerRecord(
+    address: String!,
+    questionId: Int!,
+    tryId: Int!,
+    isCorrect: Boolean!,
+    record: String! 
+  ): Question
+  
+  setUserName(
+    address:String!
+    name: String!
+  ): User
+}
+
+type Query {
+  user(address: String): User!
+  question(address: String!, questionId: Int!): Question
+  questionData: [QuestionData]
+  allQuestionOfUser(address: String!): [Question]
+  allQuestionData:[QuestionData]
+}
